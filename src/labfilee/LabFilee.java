@@ -7,6 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.DocumentFilter.FilterBypass;
 /**
  *
  * @author Usuario
@@ -25,7 +30,52 @@ public class LabFilee extends JFrame {
         setLocationRelativeTo(null);
 
         consola = new JTextArea();
-        
+        ((AbstractDocument) consola.getDocument()).setDocumentFilter(new DocumentFilter() {
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+            if (offset < posicionPrompt) {
+
+                return;
+            }
+            super.insertString(fb, offset, string, attr);
+        }
+
+        @Override
+        public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+            if (offset < posicionPrompt) {
+
+                int safeStart = Math.max(posicionPrompt, offset);
+                int safeLen = Math.max(0, (offset + length) - safeStart);
+                if (safeLen > 0) super.remove(fb, safeStart, safeLen);
+                return;
+            }
+            super.remove(fb, offset, length);
+        }
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (offset < posicionPrompt) {
+                int safeStart = Math.max(posicionPrompt, offset);
+                int safeLen = Math.max(0, (offset + length) - safeStart);
+                if (safeLen > 0) {
+
+                    super.replace(fb, safeStart, safeLen, text, attrs);
+                }
+                return;
+            }
+            super.replace(fb, offset, length, text, attrs);
+        }
+    });
+        consola.getInputMap().put(KeyStroke.getKeyStroke("control X"), "no-cut");
+
+
+        consola.getActionMap().put("no-cut", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
         consola.setBackground(Color.BLACK);
         consola.setForeground(Color.WHITE);
         consola.setFont(new Font("Consolas", Font.PLAIN, 14));

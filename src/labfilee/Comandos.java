@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 public class Comandos {
 
     private JTextArea consola;
