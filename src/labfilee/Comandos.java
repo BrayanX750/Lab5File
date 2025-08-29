@@ -106,7 +106,7 @@ public class Comandos {
     public void escribirArchivo(File dirActual, String nombre, String texto) {
         File archivo = new File(dirActual, nombre);
         if (archivo.exists() && archivo.isFile()) {
-            try (FileWriter writer = new FileWriter(archivo, true)) { // append
+            try (FileWriter writer = new FileWriter(archivo, true)) { 
                 writer.write(texto + "\n");
                 consola.append("Texto escrito en " + archivo.getName() + "\n");
             } catch (IOException e) {
